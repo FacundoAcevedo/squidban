@@ -1,0 +1,40 @@
+2013-04-23 13:42:18 INFO Creando reporte
+2013-04-23 13:42:18 INFO Intentado cargar base de datos
+2013-04-23 13:42:18 INFO Generando reporte
+2013-04-23 13:42:18 INFO Reporte generado con exito
+2013-04-23 13:42:50 INFO Creando reporte
+2013-04-23 13:42:50 INFO Intentado cargar base de datos
+2013-04-23 13:42:50 WARNING No se ha podido acceder a la base de datos en /home/romeroy/Python/squid/listados/db, creando una nueva
+2013-04-23 13:42:50 INFO Generando reporte
+2013-04-23 13:42:50 INFO Reporte generado con exito
+2013-04-23 13:44:02 INFO Creando reporte
+2013-04-23 13:44:02 INFO Intentado cargar base de datos
+2013-04-23 13:44:02 WARNING No se ha podido acceder a la base de datos en /home/romeroy/Python/squid/listados/db, creando una nueva
+2013-04-23 13:44:02 INFO Se han registrado 57345 nuevos registros
+2013-04-23 13:44:02 DEBUG Registrando cambios
+2013-04-23 13:44:02 DEBUG 08-Oct-2010 11:11:48 UTC - 192.168.0.224
+2013-04-23 13:44:02 DEBUG 08-Oct-2010 11:12:11 UTC - 192.168.0.68
+2013-04-23 13:44:02 DEBUG 08-Oct-2010 11:11:52 UTC - 192.168.0.227
+2013-04-23 13:44:02 DEBUG 08-Oct-2010 11:12:01 UTC - 192.168.0.188
+2013-04-23 13:44:02 DEBUG 09-Jan-2013 13:48:15 UTC - 10.200.0.44
+2013-04-23 13:44:02 INFO Generando reporte
+2013-04-23 13:44:02 INFO Reporte generado con exito
+2013-04-23 13:44:59 INFO Creando reporte
+2013-04-23 13:44:59 INFO Intentado cargar base de datos
+2013-04-23 13:44:59 WARNING No se ha podido acceder a la base de datos en /home/romeroy/Python/squid/listados/db, creando una nueva
+2013-04-23 13:44:59 INFO Se han registrado 57345 nuevos registros
+2013-04-23 13:44:59 DEBUG Registrando cambios
+2013-04-23 13:44:59 DEBUG 08-Oct-2010 11:11:48 UTC - 192.168.0.224
+2013-04-23 13:44:59 DEBUG 08-Oct-2010 11:12:11 UTC - 192.168.0.68
+2013-04-23 13:44:59 DEBUG 08-Oct-2010 11:11:52 UTC - 192.168.0.227
+2013-04-23 13:44:59 DEBUG 08-Oct-2010 11:12:01 UTC - 192.168.0.188
+2013-04-23 13:44:59 DEBUG 09-Jan-2013 13:48:15 UTC - 10.200.0.44
+2013-04-23 13:44:59 ERROR Ha ocurrido una excepcion inesperada
+Traceback (most recent call last):
+  File "./reporter.py", line 15, in run
+    comparador = Comparador(self.accesslog, self.ipallowed, self.dbfile)
+  File "/home/romeroy/Python/squid/classes/Comparador.py", line 15, in __init__
+    self.cargar()
+  File "/home/romeroy/Python/squid/classes/Comparador.py", line 54, in cargar
+    self.persistir()
+TypeError: persistir() takes exactly 2 arguments (1 given)
