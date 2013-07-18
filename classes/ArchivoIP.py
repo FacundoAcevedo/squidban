@@ -15,10 +15,10 @@ class ArchivoIP(Archivo):
   def load(self):
     try:
       for linea in self.import_text(self._path, " "):
-	register = Registro()
-	register.ip = linea[0]
-	register.descripcion = linea[1][1:]
-	self.usuarios[register.ip] = register
+        register = Registro()
+        register.ip = linea[0]
+        register.descripcion = linea[1][1:]
+        self.usuarios[register.ip] = register
     except:
       self.logger.error("No se ha podido acceder al archivo %s", self.path)
       raise

@@ -22,35 +22,35 @@ class Comparador:
     self.ipaddrFile.load()
     self.logger.debug("Registrando cambios")
     for acceso in self.logFile.accesos.values():
-	usuario = Registro()
-	usuario.ip = acceso.ip
-	usuario.time = acceso.time
-	self.usuarios[usuario.ip] = usuario
-	self.logger.debug("%s - %s", self.utc2string(usuario.time), usuario.ip)
-	self.cambios = True
-    self.logFile.accesos.clear()
+        usuario = Registro()
+        usuario.ip = acceso.ip
+        usuario.time = acceso.time
+        self.usuarios[usuario.ip] = usuario
+        self.logger.debug("%s - %s", self.utc2string(usuario.time), usuario.ip)
+        self.cambios = True
+        self.logFile.accesos.clear()
         
   def reporte(self, dias=30):
     self.logger.info("Generando reporte")
     print "IP sin actividad en los ultimos", dias, "dias"
     for ip in self.ipaddrFile.usuarios.keys():
-	if ip not in self.usuarios or not self.acceso_reciente(self.usuarios[ip].time, dias):
-	    usuario = self.ipaddrFile.usuarios[ip]
-	    print usuario.ip
-	
+        if ip not in self.usuarios or not self.acceso_reciente(self.usuarios[ip].time, dias):
+            usuario = self.ipaddrFile.usuarios[ip]
+            print usuario.ip
+    
   def cargar(self):
     self.logger.info("Intentado cargar base de datos")
     self.usuarios = {}
     self.ipaddrFile.load()
     self.cambios = False
     try:
-	with open(self.dbfile, "r") as f:
-	    for line in csv.reader(f, delimiter='\t', skipinitialspace=True):
-		if line:
-		    usuario = Registro()
-		    usuario.ip = line[0]
-		    usuario.time = line[1]
-		    self.usuarios[usuario.ip] = usuario
+        with open(self.dbfile, "r") as f:
+            for line in csv.reader(f, delimiter='\t', skipinitialspace=True):
+                if line:
+                    usuario = Registro()
+                    usuario.ip = line[0]
+                    usuario.time = line[1]
+                    self.usuarios[usuario.ip] = usuario
     except (IOError, EOFError):
       self.logger.warn("No se ha podido acceder a la base de datos en %s, creando una nueva", self.dbfile)
       self.registrar()
@@ -58,12 +58,12 @@ class Comparador:
 
   def persistir(self, dbfile):
     if self.cambios:
-	with open(dbfile, 'w') as f:
-	    writer = csv.writer(f, delimiter='\t')
-	    for u in self.usuarios.values():
-		writer.writerow([u.ip, u.time, self.utc2string(u.time)])
-	    self.logger.debug("Se han guardado %d registros en la base de datos", len(self.usuarios))
-	    self.cambios = False
+        with open(dbfile, 'w') as f:
+            writer = csv.writer(f, delimiter='\t')
+            for u in self.usuarios.values():
+                writer.writerow([u.ip, u.time, self.utc2string(u.time)])
+                self.logger.debug("Se han guardado %d registros en la base de datos", len(self.usuarios))
+                self.cambios = False
   
   def acceso_reciente(self, tiempo_acceso, dias_maximo):
     localtime = time.time()

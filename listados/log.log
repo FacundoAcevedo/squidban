@@ -38,3 +38,127 @@ Traceback (most recent call last):
   File "/home/romeroy/Python/squid/classes/Comparador.py", line 54, in cargar
     self.persistir()
 TypeError: persistir() takes exactly 2 arguments (1 given)
+2013-07-18 09:01:42 INFO Iniciando aplicacion
+2013-07-18 09:01:42 INFO Intentado cargar base de datos
+2013-07-18 09:01:42 INFO Se han registrado 57345 nuevos registros
+2013-07-18 09:01:42 DEBUG Registrando cambios
+2013-07-18 09:01:42 DEBUG 08-Oct-2010 11:11:48 UTC - 192.168.0.224
+2013-07-18 09:01:42 DEBUG 08-Oct-2010 11:12:11 UTC - 192.168.0.68
+2013-07-18 09:01:42 DEBUG 08-Oct-2010 11:11:52 UTC - 192.168.0.227
+2013-07-18 09:01:42 DEBUG 08-Oct-2010 11:12:01 UTC - 192.168.0.188
+2013-07-18 09:01:42 DEBUG 09-Jan-2013 13:48:15 UTC - 10.200.0.44
+2013-07-18 09:01:42 DEBUG Se han guardado 5 registros en la base de datos
+2013-07-18 09:01:42 DEBUG Se han guardado 5 registros en la base de datos
+2013-07-18 09:01:42 DEBUG Se han guardado 5 registros en la base de datos
+2013-07-18 09:01:42 DEBUG Se han guardado 5 registros en la base de datos
+2013-07-18 09:01:42 DEBUG Se han guardado 5 registros en la base de datos
+2013-07-18 09:01:44 DEBUG Registrando cambios
+2013-07-18 09:01:46 DEBUG Registrando cambios
+2013-07-18 09:01:47 WARNING Deteniendo aplicacion
+2013-07-18 09:02:17 INFO Iniciando aplicacion
+2013-07-18 09:02:17 INFO Intentado cargar base de datos
+2013-07-18 09:02:17 INFO Se han registrado 57345 nuevos registros
+2013-07-18 09:02:17 DEBUG Registrando cambios
+2013-07-18 09:02:17 DEBUG 08-Oct-2010 11:11:48 UTC - 192.168.0.224
+2013-07-18 09:02:17 DEBUG 08-Oct-2010 11:12:11 UTC - 192.168.0.68
+2013-07-18 09:02:17 DEBUG 08-Oct-2010 11:11:52 UTC - 192.168.0.227
+2013-07-18 09:02:17 DEBUG 08-Oct-2010 11:12:01 UTC - 192.168.0.188
+2013-07-18 09:02:17 DEBUG 09-Jan-2013 13:48:15 UTC - 10.200.0.44
+2013-07-18 09:02:17 DEBUG Se han guardado 5 registros en la base de datos
+2013-07-18 09:02:17 DEBUG Se han guardado 5 registros en la base de datos
+2013-07-18 09:02:17 DEBUG Se han guardado 5 registros en la base de datos
+2013-07-18 09:02:17 DEBUG Se han guardado 5 registros en la base de datos
+2013-07-18 09:02:17 DEBUG Se han guardado 5 registros en la base de datos
+2013-07-18 09:02:19 DEBUG Registrando cambios
+2013-07-18 09:02:21 DEBUG Registrando cambios
+2013-07-18 09:02:23 DEBUG Registrando cambios
+2013-07-18 09:02:25 DEBUG Registrando cambios
+2013-07-18 09:02:28 DEBUG Registrando cambios
+2013-07-18 09:02:30 DEBUG Registrando cambios
+2013-07-18 09:02:32 DEBUG Registrando cambios
+2013-07-18 09:02:34 DEBUG Registrando cambios
+2013-07-18 09:02:36 DEBUG Registrando cambios
+2013-07-18 09:02:38 DEBUG Registrando cambios
+2013-07-18 09:02:40 DEBUG Registrando cambios
+2013-07-18 09:02:42 DEBUG Registrando cambios
+2013-07-18 09:02:44 DEBUG Registrando cambios
+2013-07-18 09:02:46 DEBUG Registrando cambios
+2013-07-18 09:02:48 DEBUG Registrando cambios
+2013-07-18 09:02:50 DEBUG Registrando cambios
+2013-07-18 09:02:52 DEBUG Registrando cambios
+2013-07-18 09:02:54 DEBUG Registrando cambios
+2013-07-18 09:02:56 DEBUG Registrando cambios
+2013-07-18 09:02:58 DEBUG Registrando cambios
+2013-07-18 09:03:00 DEBUG Registrando cambios
+2013-07-18 09:03:02 DEBUG Registrando cambios
+2013-07-18 09:03:04 DEBUG Registrando cambios
+2013-07-18 09:03:06 DEBUG Registrando cambios
+2013-07-18 09:03:08 DEBUG Registrando cambios
+2013-07-18 09:03:10 DEBUG Registrando cambios
+2013-07-18 09:03:12 DEBUG Registrando cambios
+2013-07-18 09:03:15 DEBUG Registrando cambios
+2013-07-18 09:03:17 DEBUG Registrando cambios
+2013-07-18 09:03:19 DEBUG Registrando cambios
+2013-07-18 09:03:21 DEBUG Registrando cambios
+2013-07-18 09:03:23 DEBUG Registrando cambios
+2013-07-18 09:03:25 DEBUG Registrando cambios
+2013-07-18 09:03:27 DEBUG Registrando cambios
+2013-07-18 09:03:29 DEBUG Registrando cambios
+2013-07-18 09:03:31 DEBUG Registrando cambios
+2013-07-18 09:03:33 DEBUG Registrando cambios
+2013-07-18 09:03:35 DEBUG Registrando cambios
+2013-07-18 09:03:37 DEBUG Registrando cambios
+2013-07-18 09:03:39 DEBUG Registrando cambios
+2013-07-18 09:03:41 DEBUG Registrando cambios
+2013-07-18 09:03:43 DEBUG Registrando cambios
+2013-07-18 09:03:45 DEBUG Registrando cambios
+2013-07-18 09:03:47 DEBUG Registrando cambios
+2013-07-18 09:03:49 DEBUG Registrando cambios
+2013-07-18 09:03:51 DEBUG Registrando cambios
+2013-07-18 09:03:53 DEBUG Registrando cambios
+2013-07-18 09:03:55 DEBUG Registrando cambios
+2013-07-18 09:03:57 DEBUG Registrando cambios
+2013-07-18 09:03:59 DEBUG Registrando cambios
+2013-07-18 09:04:01 DEBUG Registrando cambios
+2013-07-18 09:04:03 DEBUG Registrando cambios
+2013-07-18 09:04:06 DEBUG Registrando cambios
+2013-07-18 09:04:08 DEBUG Registrando cambios
+2013-07-18 09:04:10 DEBUG Registrando cambios
+2013-07-18 09:04:12 DEBUG Registrando cambios
+2013-07-18 09:04:14 DEBUG Registrando cambios
+2013-07-18 09:04:16 DEBUG Registrando cambios
+2013-07-18 09:04:18 DEBUG Registrando cambios
+2013-07-18 09:04:19 WARNING Deteniendo aplicacion
+2013-07-18 09:04:19 INFO Intentado cargar base de datos
+2013-07-18 09:04:20 INFO Se han registrado 57345 nuevos registros
+2013-07-18 09:04:20 DEBUG Registrando cambios
+2013-07-18 09:04:20 DEBUG 08-Oct-2010 11:11:48 UTC - 192.168.0.224
+2013-07-18 09:04:20 DEBUG 08-Oct-2010 11:12:11 UTC - 192.168.0.68
+2013-07-18 09:04:20 DEBUG 08-Oct-2010 11:11:52 UTC - 192.168.0.227
+2013-07-18 09:04:20 DEBUG 08-Oct-2010 11:12:01 UTC - 192.168.0.188
+2013-07-18 09:04:20 DEBUG 09-Jan-2013 13:48:15 UTC - 10.200.0.44
+2013-07-18 09:04:20 DEBUG Se han guardado 5 registros en la base de datos
+2013-07-18 09:04:20 DEBUG Se han guardado 5 registros en la base de datos
+2013-07-18 09:04:20 DEBUG Se han guardado 5 registros en la base de datos
+2013-07-18 09:04:20 DEBUG Se han guardado 5 registros en la base de datos
+2013-07-18 09:04:20 DEBUG Se han guardado 5 registros en la base de datos
+2013-07-18 09:04:22 DEBUG Registrando cambios
+2013-07-18 09:04:24 DEBUG Registrando cambios
+2013-07-18 09:04:26 DEBUG Registrando cambios
+2013-07-18 09:04:28 DEBUG Registrando cambios
+2013-07-18 09:04:30 DEBUG Registrando cambios
+2013-07-18 09:04:32 DEBUG Registrando cambios
+2013-07-18 09:04:34 DEBUG Registrando cambios
+2013-07-18 09:04:36 DEBUG Registrando cambios
+2013-07-18 09:04:38 DEBUG Registrando cambios
+2013-07-18 09:04:40 DEBUG Registrando cambios
+2013-07-18 09:04:42 DEBUG Registrando cambios
+2013-07-18 09:04:44 DEBUG Registrando cambios
+2013-07-18 09:04:46 DEBUG Registrando cambios
+2013-07-18 09:04:48 DEBUG Registrando cambios
+2013-07-18 09:04:50 DEBUG Registrando cambios
+2013-07-18 09:04:52 DEBUG Registrando cambios
+2013-07-18 09:04:54 DEBUG Registrando cambios
+2013-07-18 09:04:56 DEBUG Registrando cambios
+2013-07-18 09:04:58 DEBUG Registrando cambios
+2013-07-18 09:05:00 DEBUG Registrando cambios

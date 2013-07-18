@@ -17,14 +17,14 @@ class SquidControl(Daemon):
       self.logger.info("Iniciando aplicacion")
       
       try:
-		comparador = Comparador(self.accesslog, self.ipallowed, self.dbfile)
-		while True:
-		    comparador.registrar()
-		    comparador.persistir(self.dbfile)
-		    time.sleep(self.register_interval)
-	  except:
-			 self.logger.exception("Ha ocurrido una excepcion inesperada")
-	 
+        comparador = Comparador(self.accesslog, self.ipallowed, self.dbfile)
+        while True:
+            comparador.registrar()
+            comparador.persistir(self.dbfile)
+            time.sleep(self.register_interval)
+      except:
+          self.logger.exception("Ha ocurrido una excepcion inesperada")
+     
   def readConfig(self, config_file="config.cfg"):
     try:
       config = ConfigParser.ConfigParser()
@@ -52,6 +52,11 @@ class SquidControl(Daemon):
     self.prepareLogging()
     self.logger.warn("Deteniendo aplicacion")
     Daemon.stop(self)
+    
+  def restart(self):
+      self.logger.warn("Reiniciando aplicacion")
+      self.stop()
+      self.run()
     
 if __name__=="__main__":
   s = SquidControl('/tmp/s.pid')
