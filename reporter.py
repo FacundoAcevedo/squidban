@@ -7,6 +7,7 @@ import logging.config
 from classes.Comparador import Comparador
 
 class Reporter():
+    """Llama al comparador y genera el reporte"""
   def run(self):
       self.readConfig()
       self.prepareLogging()
@@ -23,7 +24,7 @@ class Reporter():
       config = ConfigParser.ConfigParser()
       config.read(["config.cfg"])
       self.accesslog = config.get("Paths","accesslog")
-      self.ipallowed = config.get("Paths","ipallowed")
+      self.ipallowed = config.get("Paths","ipallowed").split(",")
       self.dbfile = config.get("Paths","dbfile")
       self.logconfig = config.get("Paths","logconfig", "")
       self.register_interval = int(config.get("Times","register_interval"))

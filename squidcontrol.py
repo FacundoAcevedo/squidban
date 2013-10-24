@@ -15,22 +15,24 @@ class SquidControl(Daemon):
       self.readConfig()
       self.prepareLogging()
       self.logger.info("Iniciando aplicacion")
-      
+
       try:
-        comparador = Comparador(self.accesslog, self.ipallowed, self.dbfile)
+        comparador = Comparador(self.accesslog, self.accessloghistoricos, self.ipallowed, self.dnsallowed, self.dbfile)
         while True:
             comparador.registrar()
             comparador.persistir(self.dbfile)
             time.sleep(self.register_interval)
       except:
           self.logger.exception("Ha ocurrido una excepcion inesperada")
-     
+
   def readConfig(self, config_file="config.cfg"):
     try:
       config = ConfigParser.ConfigParser()
-      config.read(["config.cfg"])
+      config.read(["/home/facevedo/scripts/squid/config.cfg"])
       self.accesslog = config.get("Paths","accesslog")
-      self.ipallowed = config.get("Paths","ipallowed")
+      self.accessloghistoricos = config.get("Paths","accessloghistoricos")
+      self.ipallowed = config.get("Paths","ipallowed").split(",") #ojo que es una lista
+      self.dnsallowed = config.get("Paths","dnsallowed").split(",") #ojo que es una lista
       self.dbfile = config.get("Paths","dbfile")
       self.logconfig = config.get("Paths","logconfig", "")
       self.register_interval = int(config.get("Times","register_interval"))
@@ -38,7 +40,7 @@ class SquidControl(Daemon):
     except:
       sys.stderr.write("No fue posible leer archivo de configuracion {}".format(config_file))
       raise
-    
+
   def prepareLogging(self):
     try:
       logging.config.fileConfig(self.logconfig)
@@ -46,18 +48,18 @@ class SquidControl(Daemon):
     except:
       sys.stderr.write("No fue posible leer archivo de configuracion {}".format(self.logconfig))
       raise
-    
+
   def stop(self):
     self.readConfig()
     self.prepareLogging()
     self.logger.warn("Deteniendo aplicacion")
     Daemon.stop(self)
-    
+
   def restart(self):
       self.logger.warn("Reiniciando aplicacion")
       self.stop()
       self.run()
-    
+
 if __name__=="__main__":
   s = SquidControl('/tmp/s.pid')
   s.run()

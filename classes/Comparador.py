@@ -2,25 +2,43 @@
 
 
 from ArchivoIP import ArchivoIP
+from ArchivoDns import ArchivoDNS
 from ArchivoLog import ArchivoLog
 from Registro import Registro
 import time, logging
-import pickle
 import csv
 
 class Comparador:
-  """Compara las entradas de dos archivos"""     
-  def __init__(self,logFile, ipaddrFile, dbfile):
+  """Compara las entradas de dos archivos"""
+  def __init__(self,logFile, logFilesHistoricos, ipaddrFiles,dnsaddrFiles, dbfile):
     self.logger = logging.getLogger(__name__)
-    self.logFile = ArchivoLog(logFile)
-    self.ipaddrFile = ArchivoIP(ipaddrFile)
+    self.logFile = ArchivoLog(logFile, logFilesHistoricos)
+
+    #Cargo los arguvis del ipaddr
+    self.ipaddrFile = []
+    for ipaddrFile in ipaddrFiles:
+        self.ipaddrFile.append( ArchivoIP(ipaddrFile) )
+
+    self.dnsaddrFile = []
+    for dnsaddrFile in dnsaddrFiles:
+        self.dnsaddrFile.append( ArchivoDNS(dnsaddrFiles) )
+
     self.dbfile = dbfile
     self.cargar()
-          
+
   def registrar(self):
+    """Registra los accesos del accesslog"""
+    #Cargo el archivo del log
+    self.logger.debug("Revisando logs historicos")
+    self.logFile.load_historico()
+    self.logger.debug("Revisando log actual")
     self.logFile.load()
-    self.ipaddrFile.load()
-    self.logger.debug("Registrando cambios")
+    #Cargo los archivos de ipaddr y configuro el objeto
+    for ipaddrF in self.ipaddrFile:
+        ipaddrF.load()
+    #self.logger.debug("Registrando cambios")
+
+    #Cargo los accesos
     for acceso in self.logFile.accesos.values():
         usuario = Registro()
         usuario.ip = acceso.ip
@@ -29,19 +47,21 @@ class Comparador:
         self.logger.debug("%s - %s", self.utc2string(usuario.time), usuario.ip)
         self.cambios = True
         self.logFile.accesos.clear()
-        
+
   def reporte(self, dias=30):
     self.logger.info("Generando reporte")
     print "IP sin actividad en los ultimos", dias, "dias"
-    for ip in self.ipaddrFile.usuarios.keys():
-        if ip not in self.usuarios or not self.acceso_reciente(self.usuarios[ip].time, dias):
-            usuario = self.ipaddrFile.usuarios[ip]
-            print usuario.ip
-    
+    for ipaddrF in self.ipaddrFile:
+        for ip in ipaddrF.usuarios.keys():
+            if ip not in self.usuarios or not self.acceso_reciente(self.usuarios[ip].time, dias):
+                usuario = ipaddrF.usuarios[ip]
+                print usuario.ip
+
   def cargar(self):
     self.logger.info("Intentado cargar base de datos")
     self.usuarios = {}
-    self.ipaddrFile.load()
+    for ipaddrF in self.ipaddrFile:
+        ipaddrF.load()
     self.cambios = False
     try:
         with open(self.dbfile, "r") as f:
@@ -64,10 +84,10 @@ class Comparador:
                 writer.writerow([u.ip, u.time, self.utc2string(u.time)])
                 self.logger.debug("Se han guardado %d registros en la base de datos", len(self.usuarios))
                 self.cambios = False
-  
+
   def acceso_reciente(self, tiempo_acceso, dias_maximo):
     localtime = time.time()
     return localtime - float(tiempo_acceso) < dias_maximo * 24 * 3600 # paso los dias a segundos
-    
+
   def utc2string(self, utc):
       return time.strftime("%d-%b-%Y %H:%M:%S UTC",time.gmtime(float(utc)))

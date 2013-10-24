@@ -6,17 +6,22 @@ import csv
 class Archivo:
   def __init__(self, path):
     self._path = path
-  
+
   def load(self):
     """Carga el contenido del archivo"""
     pass;
-    
+
   def get(self,id):
     """Obtiene un registro a partir de su identificador"""
     pass;
-    
+
   def import_text(self,filename, separator):
     with open(filename) as f:
       for line in csv.reader(f, delimiter=separator, skipinitialspace=True):
-	if line:
-	  yield line
+            if line:
+              yield line
+
+  def esComentario(self, linea):
+    if linea[0] == '#':
+      return True
+    return False
