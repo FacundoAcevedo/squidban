@@ -2,6 +2,7 @@
 
 
 import csv
+import os
 
 class Archivo:
   def __init__(self, path):
@@ -25,3 +26,10 @@ class Archivo:
     if linea[0] == '#':
       return True
     return False
+
+  @staticmethod
+  def _touch(fname):
+    if os.path.exists(fname):
+        os.utime(fname, None)
+    else:
+        open(fname, 'w').close()

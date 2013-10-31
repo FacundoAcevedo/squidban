@@ -4,6 +4,9 @@ import logging
 import glob
 import gzip
 import os
+import cPickle
+import subprocess
+import sys
 
 class ArchivoLog(Archivo):
    """Lee y administra los archivos de log"""
@@ -19,6 +22,7 @@ class ArchivoLog(Archivo):
      self.load_historico()
      try:
         with open(self.path, "r") as f:
+            self.logger.debug("Revisando log actual")
             filas = list(f)
             cantidad = len(filas) - self.ultimo
             if cantidad > 0:
@@ -41,6 +45,7 @@ class ArchivoLog(Archivo):
 
    def load_historico(self):
        """Carga los dos tipos de historicos"""
+        self.logger.info("Reviso los historicos")
 
        #Filtro los archivos del estilo: access.log.N
        listaLogsHistoricos = glob.glob(self.path_historico+'/access.log.*')
@@ -53,11 +58,11 @@ class ArchivoLog(Archivo):
        """Verifico los logs  historicos"""
        for logHistorico in listadoArchivos:
            if not self._log_ya_revisado(logHistorico):
-               print "Entre"
                with open(logHistorico, 'r') as f:
                    filas = list(f)
                    cantidad = len(filas) - self.ultimo
                    if cantidad > 0:
+                       self.logger.debug("Revisando %s historicos", logHistorico)
                        for f in filas[self.ultimo:]:
                            linea = f.split() # contenido linea
                            if not self.accesos.has_key(linea[2]):
@@ -65,6 +70,7 @@ class ArchivoLog(Archivo):
                              register.ip = linea[2]
                              register.time = float(linea[0])
                              self.accesos[register.ip] = register
+                             self.logger.info("Agregando %s a la db", register.ip)
 
                            else:
                              #Actualizo la fecha, si es mas actual
@@ -73,6 +79,7 @@ class ArchivoLog(Archivo):
                              fechaEnLog = float(linea[0])
                              if fechaEnObjeto < fechaEnLog:
                                  registro.time = fechaEnLog
+                                 self.logger.info("Actualizando aparicion de %s", registro.ip)
 
                        self.logger.info("Se han registrado %d nuevos registros", cantidad)
                        self.ultimo += cantidad
@@ -82,52 +89,69 @@ class ArchivoLog(Archivo):
        """Verifico los logs  historicos"""
        for logHistorico in listadoArchivos:
            if not self._log_ya_revisado(logHistorico):
-               comprimido = gzip.open(logHistorico, "r")
-               filas = list(comprimido.read())
-               cantidad = len(filas) - self.ultimo
+               #comando = ["/bin/gzip"," -dc ",logHistorico," | /bin/awk '{print $1\" \"$3}'"]
+               comando = ["nice -n 15 /bin/gzip -dc "+logHistorico+" | /bin/awk '{print $1\" \"$3}'"]
+               print "Comando: ",comando
+               comprimido = subprocess.Popen(comando,shell=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+               resultado = comprimido.communicate()
+#               print "Resultado: ",resultado[0]
+               stdout = resultado[0] # 1 es stderr
+               filas = stdout.split("\n")
+               #filas = resultado.split("\n")
+               cantidad = len(filas)
                if cantidad > 0:
-                   for f in filas[self.ultimo:]:
-                       linea = f.split() # contenido linea
-                       if not self.accesos.hasa_key(linea[2]):
-                         register = Registro()
-                         register.ip = linea[2]
-                         register.time = float(linea[0])
-                         self.accesos[register.ip] = register
+                   self.logger.debug("Revisando %s historicos", logHistorico)
+                   for f in filas:
+                       if f:
+                           linea = f.split() # contenido linea
+ #                          print linea
+                           if not self.accesos.has_key(linea[1]):
+                             register = Registro()
+                             register.ip = linea[1]
+                             register.time = float(linea[0])
+                             self.accesos[register.ip] = register
+                             self.logger.info("Agregando %s a la db", register.ip)
 
-                       else:
-                         #Actualizo la fecha, si es mas actual
-                         registro = self.accesos(linea[2])
-                         fechaEnObjeto = registro.time
-                         fechaEnLog = float(linea[0])
-                         if fechaEnObjeto < fechaEnLog:
-                             registro.time = fechaEnLog
+                           else:
+                             #Actualizo la fecha, si es mas actual
+                             registro = self.accesos[linea[1]]
+                             fechaEnObjeto = registro.time
+                             fechaEnLog = float(linea[0])
+                             if fechaEnObjeto < fechaEnLog:
+                                 registro.time = fechaEnLog
+                                 #self.logger.info("Actualizando aparicion de %s", registro.ip)
 
                    self.logger.info("Se han registrado %d nuevos registros", cantidad)
-                   self.ultimo += cantidad
+                   self.logger.info("Se proceso %s completamente.", logHistorico)
                self._marcar_como_revisado(logHistorico)
-               gzip.close()
 
 
    def _log_ya_revisado(self, logHistorico):
     self._touch("/tmp/__logs_revisados.log")
-    with open("/tmp/__logs_revisados.log", 'r+') as f:
-        if logHistorico in list(f):
-            return True
-        return False
+    with open("/tmp/__logs_revisados.log", 'r') as f:
+        #Si el archivo esta vacio, este try me salva un EOFError
+        try:
+            procesados = cPickle.load(f)
+            if logHistorico in procesados:
+                return True
+        except:
+            return False
 
    def _marcar_como_revisado(self, logHistorico):
     """Marco el log como ya revisado"""
     self._touch("/tmp/__logs_revisados.log")
-    with open("/tmp/__logs_revisados.log", 'a') as f:
-      f.write(logHistorico)
+    with open("/tmp/__logs_revisados.log", 'rb') as f:
+        try:
+            procesados = cPickle.load(f)
+        except:
+            procesados = []
+    if logHistorico not in procesados:
+        procesados.append(logHistorico)
+        with open("/tmp/__logs_revisados.log", 'wb') as f:
+           cPickle.dump(procesados, f, protocol=2)
 
 
    def get(self,id):
      return self.accesos[id]
 
 
-   def _touch(self,fname):
-     if os.path.exists(fname):
-         os.utime(fname, None)
-     else:
-         open(fname, 'w').close()

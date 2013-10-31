@@ -10,6 +10,14 @@ import logging.config
 from classes.daemon import Daemon
 from classes.Comparador import Comparador
 
+global RUTA_CONFIGURACION
+
+#CONFIGURACION - CONFIGURACION - CONFIGURACION -
+
+RUTA_CONFIGURACION = "/etc/squidban.cfg"
+
+#FIN CONFIGURACION - FIN CONFIGURACION - FIN CONFIGURACION -
+
 class SquidControl(Daemon):
   def run(self):
       self.readConfig()
@@ -18,9 +26,15 @@ class SquidControl(Daemon):
 
       try:
         comparador = Comparador(self.accesslog, self.accessloghistoricos, self.ipallowed, self.dnsallowed, self.dbfile)
+        contador = 0
         while True:
+            contador = contador +1
             comparador.registrar()
             comparador.persistir(self.dbfile)
+            if contador == 30:
+                contador = 0
+                self.logger.info("Actualizando reporte")
+                comparador.reporte()
             time.sleep(self.register_interval)
       except:
           self.logger.exception("Ha ocurrido una excepcion inesperada")
@@ -28,7 +42,7 @@ class SquidControl(Daemon):
   def readConfig(self, config_file="config.cfg"):
     try:
       config = ConfigParser.ConfigParser()
-      config.read(["/home/facevedo/scripts/squid/config.cfg"])
+      config.read([RUTA_CONFIGURACION])
       self.accesslog = config.get("Paths","accesslog")
       self.accessloghistoricos = config.get("Paths","accessloghistoricos")
       self.ipallowed = config.get("Paths","ipallowed").split(",") #ojo que es una lista

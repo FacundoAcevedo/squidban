@@ -19,8 +19,12 @@ class ArchivoIP(Archivo):
           if not self.esComentario(linea):
             register = Registro()
             register.ip = linea[0]
-            register.descripcion = linea[1][1:]
+            if len(linea) >=2:
+                register.descripcion = linea[1][1:]
+            else:
+                register.descripcion = ""
             self.usuarios[register.ip] = register
+
     except:
       self.logger.error("No se ha podido acceder al archivo %s", self.path)
       raise
