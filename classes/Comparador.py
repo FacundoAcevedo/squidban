@@ -60,6 +60,7 @@ class Comparador:
 
   def reporte(self, dias=30):
     self.logger.info("Generando reporte")
+
     #Levanto los csv y actualizo sincronizo mergeo los cambios con mis objetos
     with open(self.rutaDnsBaneados, "rb")as f:
         lector = csv.reader(f, delimiter=" ")
@@ -67,11 +68,13 @@ class Comparador:
             if fila not in self.listadoDnsaddrBaneadas:
                 self.listadoDnsaddrBaneadas.append(fila)
 
+    #Levanto las ip ya benadas
     with open(self.rutaIpBaneados, "rb")as f:
         lector = csv.reader(f, delimiter=" ")
         for fila in lector:
             if fila not in self.listadoIpaddrBaneadas:
                 self.listadoIpaddrBaneadas.append(fila)
+
 
     #Lo hago antes que sobre el access.log para mantener los comentarios
     #y no sobreescribirlo
@@ -102,18 +105,37 @@ class Comparador:
                 usuario = dnsaddrF.usuarios[dns]
                 #Genero la linea del csv
                 lineaAGuardar = [usuario.dns,"#"+usuario.descripcion]
+                #no lo agrego si es que ya esta
                 if lineaAGuardar not in self.listadoDnsaddrBaneadas:
-                #if ip not in [x[1]  for x in  self.listadoDnsaddrBaneadas]:
                     self.listadoDnsaddrBaneadas.append(lineaAGuardar)
+
+#    #Quito las ip que estan de mas. OPTIMIZABLE
+#    ipRecuperadas = []
+#    for sublista in self.listadoIpaddrBaneadas:
+#        ip = sublista[0]
+#        if ip not in self.usuarios or  not self.acceso_reciente(self.usuarios[ip].time, dias):
+#            ipRecuperadas.append(sublista)
+#    for sublista in ipRecuperadas:
+#        self.listadoIpaddrBaneadas.remove(sublista)
+#
+#    dnsRecuperadas = []
+#    for sublista in self.listadoDnsaddrBaneadas:
+#        if dnsaddrF.usuarios.has_key(sublista[0]):
+#            ip = dnsaddrF.usuarios[sublista[0]].ip
+#            if ip not in self.usuarios or  not self.acceso_reciente(self.usuarios[ip].time, dias):
+#                dnsRecuperadas.append(sublista)
+#    for sublista in dnsRecuperadas:
+#        self.listadoDnsaddrBaneadas.remove(sublista)
 
     with open(self.rutaDnsBaneados, "wb") as f:
         escritor = csv.writer(f, delimiter=" ")
         for fila in self.listadoDnsaddrBaneadas:
-            escritor.writerow(fila)
+                escritor.writerow(fila)
 
     with open(self.rutaIpBaneados, "wb") as f:
         escritor = csv.writer(f, delimiter=" ")
         for fila in self.listadoIpaddrBaneadas:
+            #if not self.acceso_reciente(self.usuarios[fila[0]].time, dias):
             escritor.writerow(fila)
 
   def cargar(self):
@@ -124,12 +146,6 @@ class Comparador:
     self.cambios = False
     try:
         with open(self.dbfile, "r") as f:
-            #for line in csv.reader(f, delimiter='\t', skipinitialspace=True):
-            #    if line:
-            #        usuario = Registro()
-            #        usuario.ip = line[0]
-            #        usuario.time = line[1]
-            #        self.usuarios[usuario.ip] = usuario
             self.usuarios = cPickle.load(f)
 
     except:
@@ -138,13 +154,6 @@ class Comparador:
       pass;
 
   def persistir(self, dbfile):
-    #if self.cambios:
-    #    with open(dbfile, 'w') as f:
-    #        writer = csv.writer(f, delimiter='\t')
-    #        for u in self.usuarios.values():
-    #            writer.writerow([u.ip, u.time, self.utc2string(u.time)])
-    #            self.logger.debug("Se han guardado %d registros en la base de datos", len(self.usuarios))
-    #            self.cambios = False
 
     #Serializo el objeto
     if self.cambios:

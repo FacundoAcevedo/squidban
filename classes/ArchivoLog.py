@@ -19,7 +19,7 @@ class ArchivoLog(Archivo):
      self.path_historico = path_historico
 
    def load(self):
-     self.load_historico()
+     #self.load_historico()
      try:
         with open(self.path, "r") as f:
             self.logger.debug("Revisando log actual")
@@ -45,7 +45,7 @@ class ArchivoLog(Archivo):
 
    def load_historico(self):
        """Carga los dos tipos de historicos"""
-        self.logger.info("Reviso los historicos")
+       self.logger.info("Reviso los historicos")
 
        #Filtro los archivos del estilo: access.log.N
        listaLogsHistoricos = glob.glob(self.path_historico+'/access.log.*')

@@ -31,7 +31,7 @@ class SquidControl(Daemon):
             contador = contador +1
             comparador.registrar()
             comparador.persistir(self.dbfile)
-            if contador == 30:
+            if contador == 10:
                 contador = 0
                 self.logger.info("Actualizando reporte")
                 comparador.reporte()
