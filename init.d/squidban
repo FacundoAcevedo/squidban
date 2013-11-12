@@ -17,17 +17,17 @@ lockfile=/var/lock/subsys/$prog
 start() {
     echo -n $"Starting $prog: "
     $exec start
-    #retval=$?
+    retval=$?
     echo $?
-    #[ $retval -eq 0 ] && touch $lockfile
+    [ $retval -eq 0 ] && touch $lockfile
 }
 
 stop() {
     echo -n $"Stopping $prog: "
     $exec stop
-    #retval=$?
+    retval=$?
     echo $?
-    #[ $retval -eq 0 ] && rm -f $lockfile
+    [ $retval -eq 0 ] && rm -f $lockfile
 }
 
 restart() {
@@ -55,10 +55,11 @@ case "$1" in
                 force_reload
                 ;;
         status)
-                rh_status
-                RETVAL=$?
-                if [ $RETVAL -eq 3 -a -f $lockfile ] ; then
-                        RETVAL=2
+                PID=$(ps aux | grep  "squidban start"| grep -v "grep" |  awk '{print $2'})
+                if [ -n "$PID" -a -f $lockfile ]; then
+                        echo "SquidBan esta ejecutandose"
+                else
+                        echo "SquidBan esta parado"
                 fi
                 ;;
         *)

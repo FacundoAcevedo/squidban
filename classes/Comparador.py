@@ -25,7 +25,6 @@ class Comparador:
     #Cargo los arguvis del ipaddr
     self.ipaddrFile = []
     for ipaddrFile in ipaddrFiles:
-        print ipaddrFile
         self.ipaddrFile.append( ArchivoIP(ipaddrFile) )
 
     self.dnsaddrFile = []
@@ -41,10 +40,11 @@ class Comparador:
         dnsaddrF.load()
 
 
-  def registrar(self):
+  def registrar(self, procesarHistorico=False):
     """Registra los accesos del accesslog"""
     #Cargo el archivo del log
-    self.logFile.load_historico()
+    if procesarHistorico == True:
+        self.logFile.load_historico()
     self.logFile.load()
     self.logger.debug("Registrando cambios")
 
@@ -93,7 +93,7 @@ class Comparador:
         if not self.acceso_reciente(usuario.time, dias):
             #compruebo que la ip no este en la lista de baneados
             if ip not in [x[0]  for x in  self.listadoIpaddrBaneadas]:
-                print ip
+                #print ip
                 lineaAGuardar = [ip,"#"]
                 self.listadoIpaddrBaneadas.append(lineaAGuardar)
 
@@ -109,23 +109,24 @@ class Comparador:
                 if lineaAGuardar not in self.listadoDnsaddrBaneadas:
                     self.listadoDnsaddrBaneadas.append(lineaAGuardar)
 
-#    #Quito las ip que estan de mas. OPTIMIZABLE
-#    ipRecuperadas = []
-#    for sublista in self.listadoIpaddrBaneadas:
-#        ip = sublista[0]
-#        if ip not in self.usuarios or  not self.acceso_reciente(self.usuarios[ip].time, dias):
-#            ipRecuperadas.append(sublista)
-#    for sublista in ipRecuperadas:
-#        self.listadoIpaddrBaneadas.remove(sublista)
-#
-#    dnsRecuperadas = []
-#    for sublista in self.listadoDnsaddrBaneadas:
-#        if dnsaddrF.usuarios.has_key(sublista[0]):
-#            ip = dnsaddrF.usuarios[sublista[0]].ip
-#            if ip not in self.usuarios or  not self.acceso_reciente(self.usuarios[ip].time, dias):
-#                dnsRecuperadas.append(sublista)
-#    for sublista in dnsRecuperadas:
-#        self.listadoDnsaddrBaneadas.remove(sublista)
+    #Quito las ip que estan de mas. OPTIMIZABLE
+    ipRecuperadas = []
+    for sublista in self.listadoIpaddrBaneadas:
+        ip = sublista[0]
+        if ip not in self.usuarios or  not self.acceso_reciente(self.usuarios[ip].time, dias):
+            ipRecuperadas.append(sublista)
+    for sublista in self.listadoIpaddrBaneadas:
+        if sublista not in ipRecuperadas:
+            self.listadoIpaddrBaneadas.remove(sublista)
+
+    dnsRecuperadas = []
+    for sublista in self.listadoDnsaddrBaneadas:
+        if dnsaddrF.usuarios.has_key(sublista[0]):
+            ip = dnsaddrF.usuarios[sublista[0]].ip
+            if ip not in self.usuarios or  not self.acceso_reciente(self.usuarios[ip].time, dias):
+                dnsRecuperadas.append(sublista)
+    for sublista in dnsRecuperadas:
+        self.listadoDnsaddrBaneadas.remove(sublista)
 
     with open(self.rutaDnsBaneados, "wb") as f:
         escritor = csv.writer(f, delimiter=" ")

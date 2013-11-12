@@ -91,7 +91,7 @@ class ArchivoLog(Archivo):
            if not self._log_ya_revisado(logHistorico):
                #comando = ["/bin/gzip"," -dc ",logHistorico," | /bin/awk '{print $1\" \"$3}'"]
                comando = ["nice -n 15 /bin/gzip -dc "+logHistorico+" | /bin/awk '{print $1\" \"$3}'"]
-               print "Comando: ",comando
+#               print "Comando: ",comando
                comprimido = subprocess.Popen(comando,shell=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
                resultado = comprimido.communicate()
 #               print "Resultado: ",resultado[0]

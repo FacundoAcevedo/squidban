@@ -1,0 +1,24 @@
+--SquidBan--
+
+--Instalacion:
+    Ejecutar bash setup.sh, esto copiara los archivos y dara los permisos necesarios
+    sqb se instalara por defecto en /opt/squidban, y la configuracion en 
+    /etc/squidban.cfg. Tambien se copiara en /etc/init.d/ un script de inicializacion
+    del demonio.
+
+--Desinstalacion:
+    Hay que modificar setup.sh, y descomentar la llamada a la funcion desinstalar, 
+    que esta sobre la llamada a instalar.
+
+
+--Uso:
+    service squidban [start,restart,stop]
+
+--Nota:
+    Los archivos utiles son ipbaneados y dnsbaneados, que son los listados.
+    El resto de los archivos son objetos serializados, asi que no tiene sentido 
+    leerlos ( ... salvo para el programa).
+
+    Para forzar la lectura de todos los logs historicos ( inclusive los comprimidos)
+    hay que borrar el archivo /tmp/__logs_revisados.log
+

@@ -29,7 +29,7 @@ class SquidControl(Daemon):
         contador = 0
         while True:
             contador = contador +1
-            comparador.registrar()
+            comparador.registrar(self.escanearhistoricos)
             comparador.persistir(self.dbfile)
             if contador == 10:
                 contador = 0
@@ -49,6 +49,7 @@ class SquidControl(Daemon):
       self.dnsallowed = config.get("Paths","dnsallowed").split(",") #ojo que es una lista
       self.dbfile = config.get("Paths","dbfile")
       self.logconfig = config.get("Paths","logconfig", "")
+      self.escanearhistoricos = config.get("Settings","escanearhistoricos")
       self.register_interval = int(config.get("Times","register_interval"))
       self.max_inactivity = int(config.get("Times","max_inactivity"))
     except:
