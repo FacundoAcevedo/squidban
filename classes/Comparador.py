@@ -54,7 +54,7 @@ class Comparador:
         usuario.ip = acceso.ip
         usuario.time = acceso.time
         self.usuarios[usuario.ip] = usuario
-        self.logger.debug("%s - %s", self.utc2string(usuario.time), usuario.ip)
+     self.logger.debug("%s - %s", self.utc2string(usuario.time), usuario.ip)
         self.cambios = True
         self.logFile.accesos.clear()
 
@@ -155,7 +155,6 @@ class Comparador:
       pass;
 
   def persistir(self, dbfile):
-
     #Serializo el objeto
     if self.cambios:
         with open(dbfile, 'wb') as f:

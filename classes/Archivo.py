@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import csv
 import os
 
 class Archivo:
@@ -13,16 +14,11 @@ class Archivo:
     """Obtiene un registro a partir de su identificador"""
     pass;
 
- # def import_text(self,filename, separator):
- #   with open(filename) as f:
- #     for line in csv.reader(f, delimiter=separator, skipinitialspace=True):
- #           if line:
- #             yield line
   def import_text(self,filename, separator):
     with open(filename) as f:
-      for linea in f:
-          if linea:
-              yield linea.split(separator)
+      for line in csv.reader(f, delimiter=separator, skipinitialspace=True):
+            if line:
+              yield line
 
   def esComentario(self, linea):
     if linea[0] == '#':

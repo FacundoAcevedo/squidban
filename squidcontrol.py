@@ -29,7 +29,7 @@ class SquidControl(Daemon):
         contador = 0
         while True:
             contador = contador +1
-            comparador.registrar(self.escanearhistoricos)
+            tomparador.registrar(self.escanearhistoricos)
             comparador.persistir(self.dbfile)
             if contador == 10:
                 contador = 0

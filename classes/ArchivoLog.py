@@ -18,30 +18,69 @@ class ArchivoLog(Archivo):
      self.ultimo=0
      self.path_historico = path_historico
 
+     self.where = 0
+     self.tamano = 9**100
+
+   
+   #@profile
    def load(self):
-     #self.load_historico()
+     #try:
+     #   with open(self.path, "r") as f:
+     #       self.logger.debug("Revisando log actual")
+     #       filas = list(f)
+     #       cantidad = len(filas) - self.ultimo
+     #       if cantidad > 0:
+     #           for f in filas[self.ultimo:]:
+     #               linea = f.split() # contenido linea
+     #               register = Registro()
+     #               register.ip = linea[2]
+     #               register.time = float(linea[0])
+     #               self.accesos[register.ip] = register
+     #           self.logger.info("Se han registrado %d nuevos registros", cantidad)
+     #           self.ultimo += cantidad
+     #       # Verificamos si el squid hizo rotacion de logs
+     #       elif cantidad < 0:
+     #           self.ultimo = 0
+     #           self.load()
+
+     #Lo mas optimo hasta ahora:
      try:
+	#obtengo el tamano del archivo
+        tamano = os.stat(self.path)[6]
         with open(self.path, "r") as f:
-            self.logger.debug("Revisando log actual")
-            filas = list(f)
-            cantidad = len(filas) - self.ultimo
-            if cantidad > 0:
-                for f in filas[self.ultimo:]:
-                    linea = f.split() # contenido linea
-                    register = Registro()
-                    register.ip = linea[2]
-                    register.time = float(linea[0])
-                    self.accesos[register.ip] = register
-                self.logger.info("Se han registrado %d nuevos registros", cantidad)
-                self.ultimo += cantidad
-            # Verificamos si el squid hizo rotacion de logs
-            elif cantidad < 0:
-                self.ultimo = 0
-                self.load()
+	    lineas = self._tailf(f, tamano)
+            for  f in lineas:
+		if f == "" or not f:
+                   del f,lineas
+		   break
+                linea = f.split() # contenido linea
+                register = Registro()
+                register.ip = linea[2]
+                register.time = float(linea[0])
+                self.accesos[register.ip] = register
+            #self.logger.info("Se han registrado %d nuevos registros", cantidad)
 
      except IOError:
         self.logger.error("No se ha podido acceder al archivo %s", self.path)
         raise
+
+   def _tailf(self, file, tamano):
+       #si el tamano es menor al que tengo guardado, es que el log roto
+       if tamano < self.tamano:
+          self.tamano = tamano
+          self.where = 0
+
+       salir = False
+       file.seek(self.where)
+       while True:
+	   self.where = file.tell()
+           line = file.readline()
+           if not line:
+               file.seek(self.where)
+               del line
+	       break
+           else:
+               yield line
 
    def load_historico(self):
        """Carga los dos tipos de historicos"""
