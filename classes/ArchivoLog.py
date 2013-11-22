@@ -21,7 +21,7 @@ class ArchivoLog(Archivo):
      self.where = 0
      self.tamano = 9**100
 
-   
+
    #@profile
    def load(self):
      #try:
@@ -48,17 +48,16 @@ class ArchivoLog(Archivo):
 	#obtengo el tamano del archivo
         tamano = os.stat(self.path)[6]
         with open(self.path, "r") as f:
-	    lineas = self._tailf(f, tamano)
+	        lineas = self._tailf(f, tamano)
             for  f in lineas:
-		if f == "" or not f:
+		       if f == "" or not f:
                    del f,lineas
-		   break
+		           break
                 linea = f.split() # contenido linea
                 register = Registro()
                 register.ip = linea[2]
                 register.time = float(linea[0])
                 self.accesos[register.ip] = register
-            #self.logger.info("Se han registrado %d nuevos registros", cantidad)
 
      except IOError:
         self.logger.error("No se ha podido acceder al archivo %s", self.path)
@@ -120,7 +119,7 @@ class ArchivoLog(Archivo):
                                  registro.time = fechaEnLog
                                  self.logger.info("Actualizando aparicion de %s", registro.ip)
 
-                       self.logger.info("Se han registrado %d nuevos registros", cantidad)
+                       i#self.logger.info("Se han registrado %d nuevos registros", cantidad)
                        self.ultimo += cantidad
                self._marcar_como_revisado(logHistorico)
 
@@ -128,22 +127,17 @@ class ArchivoLog(Archivo):
        """Verifico los logs  historicos"""
        for logHistorico in listadoArchivos:
            if not self._log_ya_revisado(logHistorico):
-               #comando = ["/bin/gzip"," -dc ",logHistorico," | /bin/awk '{print $1\" \"$3}'"]
                comando = ["nice -n 15 /bin/gzip -dc "+logHistorico+" | /bin/awk '{print $1\" \"$3}'"]
-#               print "Comando: ",comando
                comprimido = subprocess.Popen(comando,shell=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
                resultado = comprimido.communicate()
-#               print "Resultado: ",resultado[0]
                stdout = resultado[0] # 1 es stderr
                filas = stdout.split("\n")
-               #filas = resultado.split("\n")
                cantidad = len(filas)
                if cantidad > 0:
                    self.logger.debug("Revisando %s historicos", logHistorico)
                    for f in filas:
                        if f:
                            linea = f.split() # contenido linea
- #                          print linea
                            if not self.accesos.has_key(linea[1]):
                              register = Registro()
                              register.ip = linea[1]
