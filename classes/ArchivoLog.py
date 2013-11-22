@@ -48,16 +48,16 @@ class ArchivoLog(Archivo):
 	#obtengo el tamano del archivo
         tamano = os.stat(self.path)[6]
         with open(self.path, "r") as f:
-	        lineas = self._tailf(f, tamano)
-            for  f in lineas:
-		       if f == "" or not f:
-                   del f,lineas
-		           break
-                linea = f.split() # contenido linea
-                register = Registro()
-                register.ip = linea[2]
-                register.time = float(linea[0])
-                self.accesos[register.ip] = register
+	       lineas = self._tailf(f, tamano)
+           for  f in lineas:
+		      if f == "" or not f:
+                  del f,lineas
+		          break
+               linea = f.split() # contenido linea
+               register = Registro()
+               register.ip = linea[2]
+               register.time = float(linea[0])
+               self.accesos[register.ip] = register
 
      except IOError:
         self.logger.error("No se ha podido acceder al archivo %s", self.path)

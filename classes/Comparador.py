@@ -12,6 +12,9 @@ import cPickle
 class Comparador:
   """Compara las entradas de dos archivos"""
   def __init__(self,logFile, logFilesHistoricos, ipaddrFiles,dnsaddrFiles, dbfile):
+    #Contador de ejecuciones
+    self.contador_ejecuciones = 0
+
     self.logger = logging.getLogger(__name__)
     self.logFile = ArchivoLog(logFile, logFilesHistoricos)
 
@@ -39,8 +42,6 @@ class Comparador:
     for dnsaddrF in self.dnsaddrFile:
         dnsaddrF.load()
 
-    #Contador de ejecuciones
-    self.contador_ejecuciones = 0
 
 
   def registrar(self, procesarHistorico=False):
