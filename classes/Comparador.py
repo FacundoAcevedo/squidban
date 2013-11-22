@@ -39,14 +39,20 @@ class Comparador:
     for dnsaddrF in self.dnsaddrFile:
         dnsaddrF.load()
 
+    #Contador de ejecuciones
+    self.contador_ejecuciones = 0
+
 
   def registrar(self, procesarHistorico=False):
     """Registra los accesos del accesslog"""
+    self.contador_ejecuciones +=1
     #Cargo el archivo del log
     if procesarHistorico == True:
         self.logFile.load_historico()
     self.logFile.load()
-    self.logger.debug("Registrando cambios")
+    if self.contador_ejecuciones == 10:
+        self.contador_ejecuciones = 0
+        self.logger.debug("Registrando cambios")
 
     #Cargo los accesos
     for acceso in self.logFile.accesos.values():
@@ -54,7 +60,6 @@ class Comparador:
         usuario.ip = acceso.ip
         usuario.time = acceso.time
         self.usuarios[usuario.ip] = usuario
-     self.logger.debug("%s - %s", self.utc2string(usuario.time), usuario.ip)
         self.cambios = True
         self.logFile.accesos.clear()
 
@@ -109,7 +114,6 @@ class Comparador:
                 if lineaAGuardar not in self.listadoDnsaddrBaneadas:
                     self.listadoDnsaddrBaneadas.append(lineaAGuardar)
 
-    #Quito las ip que estan de mas. OPTIMIZABLE
     ipRecuperadas = []
     for sublista in self.listadoIpaddrBaneadas:
         ip = sublista[0]
