@@ -22,3 +22,5 @@
     Para forzar la lectura de todos los logs historicos ( inclusive los comprimidos)
     hay que borrar el archivo /tmp/__logs_revisados.log
 
+    Cuando se reinicia el servicio, se analizara el log actual desde el principio
+
