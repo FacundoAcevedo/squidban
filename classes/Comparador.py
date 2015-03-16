@@ -11,15 +11,15 @@ import cPickle
 
 class Comparador:
   """Compara las entradas de dos archivos"""
-  def __init__(self,logFile, logFilesHistoricos, ipaddrFiles,dnsaddrFiles, dbfile):
+  def __init__(self,config_comparador):
     #Contador de ejecuciones
     self.contador_ejecuciones = 0
 
     self.logger = logging.getLogger(__name__)
-    self.logFile = ArchivoLog(logFile, logFilesHistoricos)
+    self.logFile = ArchivoLog(config_comparador["accesslog"], config_comparador["accesslog_historicos"])
 
-    self.rutaDnsBaneados= "/tmp/dnsbaneados"
-    self.rutaIpBaneados= "/tmp/ipbaneados"
+    self.rutaDnsBaneados = config_comparador["rta_dns_baneadas"]
+    self.rutaIpBaneados = config_comparador["rta_ip_baneados"]
     ArchivoIP._touch(self.rutaDnsBaneados)
     ArchivoIP._touch(self.rutaIpBaneados)
     self.listadoIpaddrBaneadas = []
@@ -27,14 +27,14 @@ class Comparador:
 
     #Cargo las rutas de los  archivos del ipaddr/dnsaddr
     self.ipaddrFile = []
-    for ipaddrFile in ipaddrFiles:
+    for ipaddrFile in config_comparador["ipallowed"]:
         self.ipaddrFile.append( ArchivoIP(ipaddrFile) )
 
     self.dnsaddrFile = []
-    for dnsaddrFile in dnsaddrFiles:
+    for dnsaddrFile in config_comparador["dnsallowed"]:
         self.dnsaddrFile.append( ArchivoDNS(dnsaddrFile) )
 
-    self.dbfile = dbfile
+    self.dbfile = config_comparador["dbfile"]
     self.cargar()
     #Cargo los archivos de ipaddr/dnsaddr y configuro el objeto
     for ipaddrF in self.ipaddrFile:

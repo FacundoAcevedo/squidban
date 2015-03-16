@@ -25,7 +25,17 @@ class SquidControl(Daemon):
         self.logger.info("Iniciando aplicacion")
 
         try:
-            comparador = Comparador(self.accesslog, self.accessloghistoricos, self.ipallowed, self.dnsallowed, self.dbfile)
+            config_comparador={
+                'accesslog' : self.accesslog,
+                'accesslog_historicos' : self.accessloghistoricos,
+                'ipallowed' : self.ipallowed,
+                'dnsallowed' :  self.dnsallowed,
+                'dbfile' : self.dbfile,
+                'rta_ip_baneados' : self.rta_ip_baneados,
+                'rta_dns_baneadas' : self.rta_dns_baneadas
+            }
+
+            comparador = Comparador(config_comparador)
             contador = 0
             while True:
                 contador +=1
