@@ -44,9 +44,9 @@ class SquidControl(Daemon):
             config = ConfigParser.ConfigParser()
             config.read([RUTA_CONFIGURACION])
             self.accesslog = config.get("Paths","accesslog")
-            self.accessloghistoricos = config.get("Paths","accessloa_ghistoricos")
-            self.ipallowed = config.get("Paths","ipallowed").split(",") #ojo que es una lista
-            self.dnsallowed = config.get("Paths","dnsallowed").split(",") #ojo que es una lista
+            self.accessloghistoricos = config.get("Paths","accesslog_historicos")
+            self.ipallowed = config.get("Paths","ipallowed").strip().split(",") #ojo que es una lista
+            self.dnsallowed = config.get("Paths","dnsallowed").strip().split(",") #ojo que es una lista
             self.dbfile = config.get("Paths","dbfile")
             self.logconfig = config.get("Paths","logconfig", "")
             self.escanearhistoricos = config.get("Settings","escanear_historicos")
