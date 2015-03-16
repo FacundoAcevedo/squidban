@@ -141,7 +141,7 @@ class Comparador:
             if ip not in self.usuarios or not self.acceso_reciente(self.usuarios[ip].time, dias):
                 dnsRecuperadas.append(sublista)
     for sublista in dnsRecuperadas:
-        self.listadoDnsad drBaneadas.remove(sublista)
+        self.listadoDnsaddrBaneadas.remove(sublista)
 
 
 
