@@ -43,13 +43,21 @@ class SquidControl(Daemon):
         try:
             config = ConfigParser.ConfigParser()
             config.read([RUTA_CONFIGURACION])
+            #Paths
             self.accesslog = config.get("Paths","accesslog")
             self.accessloghistoricos = config.get("Paths","accesslog_historicos")
+
             self.ipallowed = config.get("Paths","ipallowed").strip().split(",") #ojo que es una lista
             self.dnsallowed = config.get("Paths","dnsallowed").strip().split(",") #ojo que es una lista
+            self.rta_ip_baneados = config.get("Paths","ip_baneados").strip()
+            self.rta_dns_baneadas = config.get("Paths","dns_baneadas").strip()
+
             self.dbfile = config.get("Paths","dbfile")
             self.logconfig = config.get("Paths","logconfig", "")
+            #Settings
             self.escanearhistoricos = config.get("Settings","escanear_historicos")
+
+            #Times
             self.register_interval = int(config.get("Times","intervalo_de_registro"))
             self.max_inactivity = int(config.get("Times","tiempo_inactividad_usuario"))
         except:

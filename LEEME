@@ -17,15 +17,15 @@
 --Configuracion
     [Paths]
     accesslog: Ruta al accesslog actual de Squid.
-    
     accesslog_historicos: Ruta al directorio con los accesslog historicos.
+
+    ip_baneados: Ruta del archivo donde se guardaran las ip baneadas.
+    dns_baneados: Ruta del archivo donde se guardaran los dns baneados.
     
     ipallowed: Rutas a los ficheros de ip habilitados [separado por coma].
-    
     dnsallowed: Ruta a los ficheros de dns de maquinas habilitadas [separado por coma].
     
     dbfile: Fichero serializado de la aplicacion Default: /opt/squidban/db
-    
     logconfig: Fichero con la configuracion de log: Default: /opt/squidban/log.conf
 
     [Settings]
