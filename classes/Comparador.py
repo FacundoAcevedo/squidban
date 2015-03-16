@@ -25,7 +25,7 @@ class Comparador:
     self.listadoIpaddrBaneadas = []
     self.listadoDnsaddrBaneadas = []
 
-    #Cargo los arguvis del ipaddr
+    #Cargo las rutas de los  archivos del ipaddr/dnsaddr
     self.ipaddrFile = []
     for ipaddrFile in ipaddrFiles:
         self.ipaddrFile.append( ArchivoIP(ipaddrFile) )
@@ -36,7 +36,7 @@ class Comparador:
 
     self.dbfile = dbfile
     self.cargar()
-    #Cargo los archivos de ipaddr y configuro el objeto
+    #Cargo los archivos de ipaddr/dnsaddr y configuro el objeto
     for ipaddrF in self.ipaddrFile:
         ipaddrF.load()
     for dnsaddrF in self.dnsaddrFile:
