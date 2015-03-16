@@ -14,10 +14,28 @@
 --Uso:
     service squidban [start,restart,stop]
 
+--Configuracion
+    [Paths]
+    accesslog: Ruta al accesslog actual de Squid.
+    
+    accesslog_historicos: Ruta al directorio con los accesslog historicos.
+    
+    ipallowed: Rutas a los ficheros de ip habilitados [separado por coma].
+    
+    dnsallowed: Ruta a los ficheros de dns de maquinas habilitadas [separado por coma].
+    
+    dbfile: Fichero serializado de la aplicacion Default: /opt/squidban/db
+    
+    logconfig: Fichero con la configuracion de log: Default: /opt/squidban/log.conf
+
+    [Settings]
+    escanear_historicos: True|False Busca ips y dns en los ficheros historicos de log
+    
+    [Times]
+    intervalo_de_registro: 2 Tiempo de espera cada 10 ejecuciones
+    tiempo_inactividad_usuario: 10 Cantidad de dias que una ip|dns no debe aparecer en los logs para ser baneada
+
 --Nota:
-    Los archivos utiles son ipbaneados y dnsbaneados, que son los listados.
-    El resto de los archivos son objetos serializados, asi que no tiene sentido 
-    leerlos ( ... salvo para el programa).
 
     Para forzar la lectura de todos los logs historicos ( inclusive los comprimidos)
     hay que borrar el archivo /tmp/__logs_revisados.log

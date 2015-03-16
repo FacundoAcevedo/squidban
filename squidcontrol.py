@@ -44,14 +44,14 @@ class SquidControl(Daemon):
             config = ConfigParser.ConfigParser()
             config.read([RUTA_CONFIGURACION])
             self.accesslog = config.get("Paths","accesslog")
-            self.accessloghistoricos = config.get("Paths","accessloghistoricos")
+            self.accessloghistoricos = config.get("Paths","accessloa_ghistoricos")
             self.ipallowed = config.get("Paths","ipallowed").split(",") #ojo que es una lista
             self.dnsallowed = config.get("Paths","dnsallowed").split(",") #ojo que es una lista
             self.dbfile = config.get("Paths","dbfile")
             self.logconfig = config.get("Paths","logconfig", "")
-            self.escanearhistoricos = config.get("Settings","escanearhistoricos")
-            self.register_interval = int(config.get("Times","register_interval"))
-            self.max_inactivity = int(config.get("Times","max_inactivity"))
+            self.escanearhistoricos = config.get("Settings","escanear_historicos")
+            self.register_interval = int(config.get("Times","intervalo_de_registro"))
+            self.max_inactivity = int(config.get("Times","tiempo_inactividad_usuario"))
         except:
             sys.stderr.write("No fue posible leer archivo de configuracion {}".format(config_file))
             raise
