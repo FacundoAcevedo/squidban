@@ -2,6 +2,10 @@
 #
 # Analiza las ip/dns de los usuarios del proxy y genera una lista de los
 # que no navegan hace x dias
+
+# chkconfig: 2345 20 80
+# description: squidban daemon
+# processname: squidban
 ### END INIT INFO
 
 # Source function library.
