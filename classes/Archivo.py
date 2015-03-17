@@ -22,7 +22,13 @@ class Archivo:
 
   def esComentario(self, linea):
     """Verifica si el primer caracter es #"""
-    if (linea.strip())[0] == '#':
+    #Valido la que la linea sea un string
+    try:
+        linea = " ".join(linea)
+    except:
+        pass
+
+    if linea.strip()[0] == '#':
       return True
     return False
 
