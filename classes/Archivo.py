@@ -21,7 +21,7 @@ class Archivo:
               yield line
 
   def esComentario(self, linea):
-    if linea[0] == '#':
+    if (linea.strip())[0] == '#':
       return True
     return False
 
