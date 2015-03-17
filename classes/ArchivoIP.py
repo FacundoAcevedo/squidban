@@ -16,9 +16,11 @@ class ArchivoIP(Archivo):
   def load(self):
     try:
       for linea in self.import_text(self._path, " "):
+          # Verifico si es un comentario
           if not self.esComentario(linea):
             register = Registro()
             register.ip = linea[0]
+            # Verifico si tiene comentarios a derecha y los guardo
             if len(linea) >=2:
                 register.descripcion = linea[1][1:]
             else:

@@ -35,7 +35,7 @@ class ArchivoLog(Archivo):
                         del f,lineas
                         break
                     linea = f.split() # contenido linea
-                    self.logger.info("linea: %s", repr(linea))
+                    #self.logger.info("linea: %s", repr(linea))
                     register = Registro()
                     register.ip = linea[2]
                     register.time = float(linea[0])
