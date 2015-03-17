@@ -47,6 +47,7 @@ class Comparador:
   def registrar(self, procesarHistorico=False):
     """Registra los accesos del accesslog"""
     self.contador_ejecuciones +=1
+
     #Cargo el archivo del log
     if procesarHistorico == True:
         self.logFile.load_historico()
@@ -96,11 +97,10 @@ class Comparador:
     #Baneo las ip del access.log que no aparezcan hace x dias
     for usuario in self.usuarios.values():
         ip = usuario.ip
+        #compruebo que la ip no este en la lista de baneados
         if not self.acceso_reciente(usuario.time, dias):
-            #compruebo que la ip no este en la lista de baneados
             #esto hace que no pierda el comentario
             if ip not in [x[0]  for x in  self.listadoIpaddrBaneadas]:
-                #print ip
                 lineaAGuardar = [ip,"#"]
                 self.listadoIpaddrBaneadas.append(lineaAGuardar)
 
