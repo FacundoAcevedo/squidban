@@ -26,6 +26,13 @@ start() {
     [ $retval -eq 0 ] && touch $lockfile
 }
 
+runalone() {
+    echo -n $"Starting $prog: "
+    $exec runalone
+    retval=$?
+    echo $?
+}
+
 stop() {
     echo -n $"Stopping $prog: "
     $exec stop
@@ -67,7 +74,7 @@ case "$1" in
                 fi
                 ;;
         *)
-                echo $"Usage: $0 {start|stop|restart|reload|force-reload|status}"
+                echo $"Usage: $0 {start|stop|runalone|restart|reload|force-reload|status}"
                 RETVAL=2
 esac
 exit $RETVAL
