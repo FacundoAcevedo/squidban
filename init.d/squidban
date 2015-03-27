@@ -27,7 +27,7 @@ start() {
 }
 
 runalone() {
-    echo -n $"Starting $prog: "
+    echo -n $"Run detached $prog: "
     $exec runalone
     retval=$?
     echo $?
@@ -61,6 +61,9 @@ case "$1" in
                 ;;
         reload)
                 reload
+                ;;
+        runalone)
+                runalone
                 ;;
         force-reload)
                 force_reload
