@@ -1,3 +1,3 @@
 class Registro:
-  """Representa una entrada de un archivo"""
-  pass;
+    """Representa una entrada de un archivo"""
+    pass

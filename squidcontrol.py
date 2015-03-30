@@ -12,11 +12,11 @@ from classes.Comparador import Comparador
 
 global RUTA_CONFIGURACION
 
-#CONFIGURACION - CONFIGURACION - CONFIGURACION -
+# CONFIGURACION - CONFIGURACION - CONFIGURACION -
 
 RUTA_CONFIGURACION = "/etc/squidban.cfg"
 
-#FIN CONFIGURACION - FIN CONFIGURACION - FIN CONFIGURACION -
+# FIN CONFIGURACION - FIN CONFIGURACION - FIN CONFIGURACION -
 
 
 class SquidControl(Daemon):
@@ -78,14 +78,14 @@ class SquidControl(Daemon):
         try:
             config = ConfigParser.ConfigParser()
             config.read([RUTA_CONFIGURACION])
-            #Paths
+            # Paths
             self.accesslog = config.get("Paths", "accesslog")
             self.accessloghistoricos = config.get("Paths",
                     "accesslog_historicos")
-            #lista
+            # lista
             self.ipallowed = config.get("Paths",
                     "ipallowed").strip().split(",")
-            #lista
+            # lista
             self.dnsallowed = config.get("Paths",
                     "dnsallowed").strip().split(",")
             self.rta_ip_baneados = config.get("Paths", "ip_baneados").strip()
@@ -93,11 +93,11 @@ class SquidControl(Daemon):
 
             self.dbfile = config.get("Paths", "dbfile")
             self.logconfig = config.get("Paths", "logconfig", "")
-            #Settings
+            # Settings
             self.escanearhistoricos = config.get("Settings",
                     "escanear_historicos")
 
-            #Times
+            # Times
             self.register_interval = int(config.get("Times",
                 "intervalo_de_registro"))
             self.max_inactivity = int(config.get("Times",
@@ -131,8 +131,10 @@ class SquidControl(Daemon):
         self.run()
 
     def start(self):
+        """Inicia el Squidban"""
         s = SquidControl('/tmp/s.pid')
         s.run()
+
 if __name__ == "__main__":
         s = SquidControl('/tmp/s.pid')
         s.runalone()
