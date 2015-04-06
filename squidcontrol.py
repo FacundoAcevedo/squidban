@@ -39,6 +39,7 @@ class SquidControl(Daemon):
                     contador = 0
                     self.logger.info("Actualizando reporte")
                     comparador.reporte()
+                    comparador.reporteGuardar()
                 time.sleep(self.register_interval)
         except:
             self.logger.exception("Ha ocurrido una excepcion inesperada")
@@ -57,6 +58,8 @@ class SquidControl(Daemon):
 
             self.logger.info("Actualizando reporte")
             comparador.reporte()
+            comparador.reporteGuardar()
+
         except:
             self.logger.exception("Ha ocurrido una excepcion inesperada")
 

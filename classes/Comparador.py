@@ -15,18 +15,25 @@ class Comparador:
     """Compara las entradas de dos archivos"""
 
     def __init__(self, config_comparador):
-        """Constructor"""
-        # Contador de ejecuciones
+        """Constructor
+        config_comparador: diccionario con las variables para configurar
+            el comparador"""
+        # Contador de ejecuciones para el modo demonio
         self.contador_ejecuciones = 0
 
+        #Logs de actividad
         self.logger = logging.getLogger(__name__)
         self.logFile = ArchivoLog(config_comparador["accesslog"],
             config_comparador["accesslog_historicos"])
 
+        #Levanto las rutas de los baneados
         self.rutaDnsBaneados = config_comparador["rta_dns_baneadas"]
         self.rutaIpBaneados = config_comparador["rta_ip_baneados"]
+
+        #Creo los archivos de salida si no existen
         ArchivoIP._touch(self.rutaDnsBaneados)
         ArchivoIP._touch(self.rutaIpBaneados)
+
         self.listadoIpaddrBaneadas = []
         self.listadoDnsaddrBaneadas = []
 
@@ -39,8 +46,10 @@ class Comparador:
         for dnsaddrFile in config_comparador["dnsallowed"]:
             self.dnsaddrFile.append(ArchivoDNS(dnsaddrFile))
 
+        # Cargo la ruta de la db
         self.dbfile = config_comparador["dbfile"]
         self.cargar()
+
         # Cargo los archivos de ipaddr/dnsaddr y configuro el objeto
         for ipaddrF in self.ipaddrFile:
             ipaddrF.load()
@@ -68,27 +77,25 @@ class Comparador:
             self.cambios = True
             self.logFile.accesos.clear()
 
-    def reporte(self, dias=30):
-        """Levanta los csv, actualiza, sincroniza, mergea los cambios con mis
-        objetos"""
-        self.logger.info("Generando reporte")
-
-        # Recargo los dns ya baneados
+    def recargarDnsBaneados(self):
+        """Recarga los dns que ya fueron baneados"""
         with open(self.rutaDnsBaneados, "rb")as f:
             lector = csv.reader(f, delimiter=" ")
             for fila in lector:
                 if fila not in self.listadoDnsaddrBaneadas:
                     self.listadoDnsaddrBaneadas.append(fila)
 
-        # Recargo las ip ya benadas
+    def recargarIpBaneadas(self):
+        """Recarga las ip que ya fueron baneados"""
         with open(self.rutaIpBaneados, "rb")as f:
             lector = csv.reader(f, delimiter=" ")
             for fila in lector:
                 if fila not in self.listadoIpaddrBaneadas:
                     self.listadoIpaddrBaneadas.append(fila)
 
-        # Reviso las ip habilitadas comparandolas con sus apariciones
-        # en el access.log
+    def revisarIpHabilitadas(self, dias):
+        '''Reviso las ip habilitadas comparandolas con sus apariciones
+        en el access.log'''
         for ipaddrF in self.ipaddrFile:
             for ip in ipaddrF.usuarios.keys():
                 if ip not in self.usuarios or \
@@ -99,7 +106,8 @@ class Comparador:
                         lineaAGuardar = [usuario.ip, "#" + usuario.descripcion]
                         self.listadoIpaddrBaneadas.append(lineaAGuardar)
 
-        # Baneo las ip del access.log que no aparezcan hace x dias
+    def banearIpDelAccessLog(self, dias):
+        '''Baneo las ip del access.log que no aparezcan hace x dias'''
         for usuario in self.usuarios.values():
             ip = usuario.ip
             # compruebo que la ip no este en la lista de baneados
@@ -108,6 +116,35 @@ class Comparador:
                 if ip not in [x[0] for x in self.listadoIpaddrBaneadas]:
                     lineaAGuardar = [ip, "#"]
                     self.listadoIpaddrBaneadas.append(lineaAGuardar)
+
+    def banearDnsDelAccessLog(self, dias):
+        '''Baneo los dns del access.log que no aparezcan hace x dias'''
+        for dnsaddrF in self.dnsaddrFile:
+            for dns in dnsaddrF.usuarios.keys():
+                ip = dnsaddrF.usuarios[dns].ip
+                if ip not in self.usuarios or not self.acceso_reciente(
+                    self.usuarios[ip].time, dias) or ip == "666.666.666.666":
+                    usuario = dnsaddrF.usuarios[dns]
+                    # Genero la linea del csv
+                    lineaAGuardar = [usuario.dns, "#" + usuario.descripcion]
+                    # no lo agrego si es que ya esta
+                    if lineaAGuardar not in self.listadoDnsaddrBaneadas:
+                        self.listadoDnsaddrBaneadas.append(lineaAGuardar)
+
+    def reporte(self, dias=30):
+        """Levanta los csv, actualiza, sincroniza, mergea los cambios con mis
+        objetos"""
+        self.logger.info("Generando reporte")
+
+        self.recargarDnsBaneados()
+        self.recargarIpBaneadas()
+
+        # Reviso las ip habilitadas comparandolas con sus apariciones
+        # en el access.log
+        self.revisarIpHabilitadas(dias)
+
+        # Baneo las ip del access.log que no aparezcan hace x dias
+        self.banearIpDelAccessLog(dias)
 
         # Baneo los dns del access.log que no aparezcan hace x dias
         for dnsaddrF in self.dnsaddrFile:
@@ -147,6 +184,8 @@ class Comparador:
         for sublista in dnsRecuperadas:
             self.listadoDnsaddrBaneadas.remove(sublista)
 
+    def reporteGuardar(self):
+        """Guarda el reporte a un archivo"""
         with open(self.rutaDnsBaneados, "wb") as f:
             escritor = csv.writer(f, delimiter=" ")
             for fila in self.listadoDnsaddrBaneadas:
@@ -155,7 +194,8 @@ class Comparador:
         with open(self.rutaIpBaneados, "wb") as f:
             escritor = csv.writer(f, delimiter=" ")
             for fila in self.listadoIpaddrBaneadas:
-                # if not self.acceso_reciente(self.usuarios[fila[0]].time, dias):
+                # if not self.acceso_reciente(self.usuarios[fila[0]]
+                #.time, dias):
                 escritor.writerow(fila)
 
     def cargar(self):

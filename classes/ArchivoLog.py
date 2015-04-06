@@ -21,7 +21,6 @@ class ArchivoLog(Archivo):
         self.where = 0
         self.tamano = 9 ** 100
 
-
    #@profile
     def load(self):
         """Cargo el archivo de log"""
