@@ -77,48 +77,23 @@ class Comparador:
             self.cambios = True
             self.logFile.accesos.clear()
 
-    def recargarDnsBaneados(self):
-        """Recarga los dns que ya fueron baneados"""
-        with open(self.rutaDnsBaneados, "rb")as f:
-            lector = csv.reader(f, delimiter=" ")
-            for fila in lector:
-                if fila not in self.listadoDnsaddrBaneadas:
-                    self.listadoDnsaddrBaneadas.append(fila)
-
-    def recargarIpBaneadas(self):
-        """Recarga las ip que ya fueron baneados"""
-        with open(self.rutaIpBaneados, "rb")as f:
-            lector = csv.reader(f, delimiter=" ")
-            for fila in lector:
-                if fila not in self.listadoIpaddrBaneadas:
-                    self.listadoIpaddrBaneadas.append(fila)
-
     def revisarIpHabilitadas(self, dias):
         '''Reviso las ip habilitadas comparandolas con sus apariciones
         en el access.log'''
         for ipaddrF in self.ipaddrFile:
             for ip in ipaddrF.usuarios.keys():
+                # self.usuarios son las ip del accesslog
                 if ip not in self.usuarios or \
                 not self.acceso_reciente(self.usuarios[ip].time, dias):
                     usuario = ipaddrF.usuarios[ip]
                     # Genero la linea del csv
-                    if ip not in [x[0] for x in self.listadoIpaddrBaneadas]:
-                        lineaAGuardar = [usuario.ip, "#" + usuario.descripcion]
-                        self.listadoIpaddrBaneadas.append(lineaAGuardar)
-
-    def banearIpDelAccessLog(self, dias):
-        '''Baneo las ip del access.log que no aparezcan hace x dias'''
-        for usuario in self.usuarios.values():
-            ip = usuario.ip
-            # compruebo que la ip no este en la lista de baneados
-            if not self.acceso_reciente(usuario.time, dias):
-                # esto hace que no pierda el comentario
-                if ip not in [x[0] for x in self.listadoIpaddrBaneadas]:
-                    lineaAGuardar = [ip, "#"]
+                    #if ip not in [x[0] for x in self.listadoIpaddrBaneadas]:
+                    lineaAGuardar = [usuario.ip, "#" + usuario.descripcion]
                     self.listadoIpaddrBaneadas.append(lineaAGuardar)
 
-    def banearDnsDelAccessLog(self, dias):
-        '''Baneo los dns del access.log que no aparezcan hace x dias'''
+    def revisarDnsHabilitados(self, dias):
+        '''Reviso las ip habilitadas comparandolas con sus apariciones
+        en el access.log'''
         for dnsaddrF in self.dnsaddrFile:
             for dns in dnsaddrF.usuarios.keys():
                 ip = dnsaddrF.usuarios[dns].ip
@@ -136,56 +111,14 @@ class Comparador:
         objetos"""
         self.logger.info("Generando reporte")
 
-        self.recargarDnsBaneados()
-        self.recargarIpBaneadas()
-
         # Reviso las ip habilitadas comparandolas con sus apariciones
         # en el access.log
         self.revisarIpHabilitadas(dias)
-
-        # Baneo las ip del access.log que no aparezcan hace x dias
-        self.banearIpDelAccessLog(dias)
-
-        # Baneo los dns del access.log que no aparezcan hace x dias
-        for dnsaddrF in self.dnsaddrFile:
-            for dns in dnsaddrF.usuarios.keys():
-                ip = dnsaddrF.usuarios[dns].ip
-                if ip not in self.usuarios or not self.acceso_reciente(
-                    self.usuarios[ip].time, dias) or ip == "666.666.666.666":
-                    usuario = dnsaddrF.usuarios[dns]
-                    # Genero la linea del csv
-                    lineaAGuardar = [usuario.dns, "#" + usuario.descripcion]
-                    # no lo agrego si es que ya esta
-                    if lineaAGuardar not in self.listadoDnsaddrBaneadas:
-                        self.listadoDnsaddrBaneadas.append(lineaAGuardar)
-
-        # Verifico  que las ip que ya marque como baneadas, no esten habilitadas
-        # o tegan un acceso reciente
-        ipRecuperadas = []
-        for sublista in self.listadoIpaddrBaneadas:
-            ip = sublista[0]
-            if ip not in self.usuarios or not self.acceso_reciente(
-                self.usuarios[ip].time, dias):
-                ipRecuperadas.append(sublista)
-        # Si estan habilitadas o tuvieron un acceso reciente, las borro de
-        # la lista de baneadas
-        for sublista in self.listadoIpaddrBaneadas:
-            if sublista not in ipRecuperadas:
-                self.listadoIpaddrBaneadas.remove(sublista)
-
-        # Idem bloque anterior
-        dnsRecuperadas = []
-        for sublista in self.listadoDnsaddrBaneadas:
-            if sublista[0] in dnsaddrF.usuarios:
-                ip = dnsaddrF.usuarios[sublista[0]].ip
-                if ip not in self.usuarios or \
-                not self.acceso_reciente(self.usuarios[ip].time, dias):
-                    dnsRecuperadas.append(sublista)
-        for sublista in dnsRecuperadas:
-            self.listadoDnsaddrBaneadas.remove(sublista)
+        self.revisarDnsHabilitados(dias)
 
     def reporteGuardar(self):
-        """Guarda el reporte a un archivo"""
+        """Guarda el reporte a un archivo
+        Borra el contenido y lo reescribe"""
         with open(self.rutaDnsBaneados, "wb") as f:
             escritor = csv.writer(f, delimiter=" ")
             for fila in self.listadoDnsaddrBaneadas:
@@ -194,8 +127,6 @@ class Comparador:
         with open(self.rutaIpBaneados, "wb") as f:
             escritor = csv.writer(f, delimiter=" ")
             for fila in self.listadoIpaddrBaneadas:
-                # if not self.acceso_reciente(self.usuarios[fila[0]]
-                #.time, dias):
                 escritor.writerow(fila)
 
     def cargar(self):
@@ -231,5 +162,49 @@ class Comparador:
     def utc2string(self, utc):
         """"Transforma utc a string"""
         return time.strftime("%d-%b-%Y %H:%M:%S UTC", time.gmtime(float(utc)))
+
+#Dejo estas funciones por que quizas sean utiles en el futuro
+    def banearIpDelAccessLog(self, dias):
+        '''Marco como baneadas las ip dentro del accesslog, que no navegan hace
+        x dias'''
+        for usuario in self.usuarios.values():
+            ip = usuario.ip
+            # compruebo que la ip no este en la lista de baneados
+            if not self.acceso_reciente(usuario.time, dias):
+                # esto hace que no pierda el comentario
+                if ip not in [x[0] for x in self.listadoIpaddrBaneadas]:
+                    lineaAGuardar = [ip, "#"]
+                    self.listadoIpaddrBaneadas.append(lineaAGuardar)
+
+    def banearDnsDelAccessLog(self, dias):
+        '''Marco como baneadas los dns dentro del accesslog, que no navegan hace
+        x dias'''
+        for dnsaddrF in self.dnsaddrFile:
+            for dns in dnsaddrF.usuarios.keys():
+                ip = dnsaddrF.usuarios[dns].ip
+                if ip not in self.usuarios or not self.acceso_reciente(
+                    self.usuarios[ip].time, dias) or ip == "666.666.666.666":
+                    usuario = dnsaddrF.usuarios[dns]
+                    # Genero la linea del csv
+                    lineaAGuardar = [usuario.dns, "#" + usuario.descripcion]
+                    # no lo agrego si es que ya esta
+                    if lineaAGuardar not in self.listadoDnsaddrBaneadas:
+                        self.listadoDnsaddrBaneadas.append(lineaAGuardar)
+
+    def recargarDnsBaneados(self):
+        """Recarga los dns que ya fueron baneados"""
+        with open(self.rutaDnsBaneados, "rb")as f:
+            lector = csv.reader(f, delimiter=" ")
+            for fila in lector:
+                if fila not in self.listadoDnsaddrBaneadas:
+                    self.listadoDnsaddrBaneadas.append(fila)
+
+    def recargarIpBaneadas(self):
+        """Recarga las ip que ya fueron baneados"""
+        with open(self.rutaIpBaneados, "rb")as f:
+            lector = csv.reader(f, delimiter=" ")
+            for fila in lector:
+                if fila not in self.listadoIpaddrBaneadas:
+                    self.listadoIpaddrBaneadas.append(fila)
 
 # vim: tabstop=4 expandtab shiftwidth=4
