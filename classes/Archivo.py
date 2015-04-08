@@ -33,7 +33,7 @@ class Archivo:
         except:
             pass
 
-        if linea.strip()[0] == '#':
+        if not len(linea) == 0 and linea.strip()[0] == '#':
             return True
         return False
 

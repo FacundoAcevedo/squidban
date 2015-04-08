@@ -23,8 +23,8 @@ class Comparador:
         config_comparador = {
             'accesslog': ruta al access log de squidban,
             'accesslog_historicos': ruta a los log historicos de squid,
-            'ipallowed': Ruta a las ip habilitadas,
-            'dnsallowed': Ruta a los dns habilitados,
+            'ipallowed': lista de ruta a las ip habilitadas,
+            'dnsallowed': lista ruta a los dns habilitados,
             'dbfile': ruta a la DB de squidban,
             'rta_ip_baneados': ruta al fichero de salida de ip baneadas,
             'rta_dns_baneadas': ruta al fichero de salida de ip baneadas,
@@ -154,6 +154,7 @@ class Comparador:
         """Carga la base de datos y carga los objetos"""
         self.logger.info("Intentado cargar base de datos")
         self.usuarios = {}
+
         for ipaddrF in self.ipaddrFile:
             ipaddrF.load()
         self.cambios = False
