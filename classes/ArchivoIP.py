@@ -23,12 +23,15 @@ class ArchivoIP(Archivo):
                 # Verifico si es un comentario
                 if not self.esComentario(linea):
                     register = Registro()
-                    register.ip = linea[0]
+                    register.ip = str(linea[0]).strip()
                     # Verifico si tiene comentarios a derecha y los guardo
                     if len(linea) >= 2:
                         register.descripcion = linea[1][1:]
                     else:
                         register.descripcion = ""
+
+                    # 0.0 significa que nunca se conecto
+                    register.time = "0.0"
                     self.usuarios[register.ip] = register
 
         except:

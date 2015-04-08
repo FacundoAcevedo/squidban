@@ -5,6 +5,7 @@ from ArchivoIP import ArchivoIP
 from ArchivoDns import ArchivoDNS
 from ArchivoLog import ArchivoLog
 from Registro import Registro
+from Constantes import IPINVALIDA
 import time
 import logging
 import csv
@@ -63,7 +64,10 @@ class Comparador:
         # Cargo el archivo del log
         if procesarHistorico is True:
             self.logFile.load_historico()
+        # Cargo las entradas del log de squid
         self.logFile.load()
+
+        # Contador para el modo demonio
         if self.contador_ejecuciones == 10:
             self.contador_ejecuciones = 0
             self.logger.debug("Registrando cambios")
@@ -75,7 +79,7 @@ class Comparador:
             usuario.time = acceso.time
             self.usuarios[usuario.ip] = usuario
             self.cambios = True
-            self.logFile.accesos.clear()
+            #self.logFile.accesos.clear()
 
     def revisarIpHabilitadas(self, dias):
         '''Reviso las ip habilitadas comparandolas con sus apariciones
@@ -86,9 +90,12 @@ class Comparador:
                 if ip not in self.usuarios or \
                 not self.acceso_reciente(self.usuarios[ip].time, dias):
                     usuario = ipaddrF.usuarios[ip]
+                    usuario.time = str(self.logFile.getTime(ip))
+
                     # Genero la linea del csv
-                    #if ip not in [x[0] for x in self.listadoIpaddrBaneadas]:
-                    lineaAGuardar = [usuario.ip, "#" + usuario.descripcion]
+                    lineaAGuardar = [usuario.ip, ";" + usuario.time +
+                    ";" + usuario.descripcion]
+
                     self.listadoIpaddrBaneadas.append(lineaAGuardar)
 
     def revisarDnsHabilitados(self, dias):
@@ -98,13 +105,15 @@ class Comparador:
             for dns in dnsaddrF.usuarios.keys():
                 ip = dnsaddrF.usuarios[dns].ip
                 if ip not in self.usuarios or not self.acceso_reciente(
-                    self.usuarios[ip].time, dias) or ip == "666.666.666.666":
+                    self.usuarios[ip].time, dias) or ip == IPINVALIDA:
                     usuario = dnsaddrF.usuarios[dns]
+                    usuario.time = str(self.logFile.getTime(ip))
+
                     # Genero la linea del csv
-                    lineaAGuardar = [usuario.dns, "#" + usuario.descripcion]
-                    # no lo agrego si es que ya esta
-                    if lineaAGuardar not in self.listadoDnsaddrBaneadas:
-                        self.listadoDnsaddrBaneadas.append(lineaAGuardar)
+                    lineaAGuardar = [usuario.dns, ";" + usuario.time +
+                    ";" + usuario.descripcion]
+
+                    self.listadoDnsaddrBaneadas.append(lineaAGuardar)
 
     def reporte(self, dias=30):
         """Levanta los csv, actualiza, sincroniza, mergea los cambios con mis
@@ -183,7 +192,7 @@ class Comparador:
             for dns in dnsaddrF.usuarios.keys():
                 ip = dnsaddrF.usuarios[dns].ip
                 if ip not in self.usuarios or not self.acceso_reciente(
-                    self.usuarios[ip].time, dias) or ip == "666.666.666.666":
+                    self.usuarios[ip].time, dias) or ip == IPINVALIDA:
                     usuario = dnsaddrF.usuarios[dns]
                     # Genero la linea del csv
                     lineaAGuardar = [usuario.dns, "#" + usuario.descripcion]

@@ -21,6 +21,15 @@ class ArchivoLog(Archivo):
         self.where = 0
         self.tamano = 9 ** 100
 
+    def getTime(self, ip):
+        """Obtiene los segundos desde 1970 hasta la ultima conexion"""
+        if ip in self.accesos:
+            registro = self.accesos[ip]
+            registro = registro.getAsDict()
+            return registro["time"]
+        else:
+            return "0.0"
+
    #@profile
     def load(self):
         """Cargo el archivo de log"""
@@ -38,8 +47,9 @@ class ArchivoLog(Archivo):
                     linea = f.split()
                     #self.logger.info("linea: %s", repr(linea))
                     register = Registro()
-                    register.ip = linea[2]
+                    register.ip = str(linea[2]).strip()
                     register.time = float(linea[0])
+
                     self.accesos[register.ip] = register
 
         except IOError:

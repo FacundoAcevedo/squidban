@@ -3,6 +3,7 @@
 
 from Archivo import Archivo
 from Registro import Registro
+from Constantes import IPINVALIDA
 import logging
 
 from socket import gethostbyname
@@ -30,6 +31,9 @@ class ArchivoDNS(Archivo):
                         register.descripcion = ""
                     # Resuelvo el dns
                     register.ip = self._resolverDns(linea[0])
+
+                    # 0.0 significa que nunca se conecto
+                    register.time = "0.0"
                     self.usuarios[register.dns] = register
         except:
             self.logger.error("No se ha podido acceder al\
@@ -51,4 +55,4 @@ class ArchivoDNS(Archivo):
             return str(ip)
         except:
             self.logger.warning("No se pudo resolver: " + str(unDns))
-            return "666.666.666.666"
+            return IPINVALIDA
