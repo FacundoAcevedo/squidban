@@ -16,9 +16,21 @@ class Comparador:
     """Compara las entradas de dos archivos"""
 
     def __init__(self, config_comparador):
-        """Constructor
-        config_comparador: diccionario con las variables para configurar
-            el comparador"""
+        """
+        config_comparador: diccionario con la configuracion del comparador
+
+        Descipcion:
+        config_comparador = {
+            'accesslog': ruta al access log de squidban,
+            'accesslog_historicos': ruta a los log historicos de squid,
+            'ipallowed': Ruta a las ip habilitadas,
+            'dnsallowed': Ruta a los dns habilitados,
+            'dbfile': ruta a la DB de squidban,
+            'rta_ip_baneados': ruta al fichero de salida de ip baneadas,
+            'rta_dns_baneadas': ruta al fichero de salida de ip baneadas,
+            }
+        """
+
         # Contador de ejecuciones para el modo demonio
         self.contador_ejecuciones = 0
 
