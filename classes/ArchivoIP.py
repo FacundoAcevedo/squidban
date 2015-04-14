@@ -41,4 +41,7 @@ class ArchivoIP(Archivo):
 
     def get(self, id):
         """Obtiene el usuario segun id"""
-        return self.usuarios[id]
+        try:
+            return self.usuarios[id]
+        except KeyError:
+            return None

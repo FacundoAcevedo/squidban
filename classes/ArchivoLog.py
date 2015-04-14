@@ -33,9 +33,8 @@ class ArchivoLog(Archivo):
    #@profile
     def load(self):
         """Cargo el archivo de log"""
-        # Lo mas optimo hasta ahora:
         try:
-        # obtengo el tamano del archivo
+            # obtengo el tamano del archivo
             tamano = os.stat(self.path)[6]
             with open(self.path, "r") as f:
                 lineas = self._tailf(f, tamano)
@@ -52,7 +51,7 @@ class ArchivoLog(Archivo):
 
                     self.accesos[register.ip] = register
 
-        except IOError:
+        except (IOError, OSError):
             self.logger.error("No se ha podido acceder \
             al archivo %s", self.path)
             raise
@@ -76,18 +75,18 @@ class ArchivoLog(Archivo):
             else:
                 yield line
 
-    def load_historico(self):
+    def load_historico(self, marcar_leidos=True):
         """Carga los dos tipos de historicos"""
         self.logger.info("Reviso los historicos")
 
         # Filtro los archivos del estilo: access.log.N
         listaLogsHistoricos = glob.glob(self.path_historico + '/access.log.*')
-        self._load_logs_historicos(listaLogsHistoricos)
+        self._load_logs_historicos(listaLogsHistoricos, marcar_leidos)
 
         listaGzHistoricos = glob.glob(self.path_historico + '/access.log-*.gz')
-        self._load_gz_historicos(listaGzHistoricos)
+        self._load_gz_historicos(listaGzHistoricos, marcar_leidos)
 
-    def _load_logs_historicos(self, listadoArchivos):
+    def _load_logs_historicos(self, listadoArchivos, marcar_leidos):
         """Verifico los logs  historicos"""
         for logHistorico in listadoArchivos:
             if not self._log_ya_revisado(logHistorico):
@@ -118,10 +117,12 @@ class ArchivoLog(Archivo):
                                     self.logger.info("Actualizando aparicion \
                                     de %s", registro.ip)
                             self.ultimo += cantidad
-                self._marcar_como_revisado(logHistorico)
+                if marcar_leidos:
+                    self._marcar_como_revisado(logHistorico)
 
-    def _load_gz_historicos(self, listadoArchivos):
+    def _load_gz_historicos(self, listadoArchivos, marcar_leidos):
         """Verifico los logs  historicos"""
+        #from pudb import set_trace; set_trace()
         for logHistorico in listadoArchivos:
             if not self._log_ya_revisado(logHistorico):
                 comando = ["nice -n 15 /bin/gzip -dc "
@@ -159,7 +160,9 @@ class ArchivoLog(Archivo):
                 self.logger.info("Se han registrado %d nuevos registros",
                      cantidad)
                 self.logger.info("Se proceso %s completamente.", logHistorico)
-                self._marcar_como_revisado(logHistorico)
+
+                if marcar_leidos:
+                    self._marcar_como_revisado(logHistorico)
 
     def _log_ya_revisado(self, logHistorico):
         """Verifica que logHistorico haya sido revisado"""
